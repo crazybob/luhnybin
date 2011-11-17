@@ -60,24 +60,6 @@ public class LuhnyBinTests extends TestSuite {
         .send(nestedNumber())
         .expect(mask(16));
 
-    // 1111111111111abc
-
-    // 15:
-    //  111111111111abc
-    //  121212121212aBc
-    //  (18 + a + B + c) % 10 = 0
-
-    // 16:
-    // 1111111111111abc
-    // 2121212121212aBc
-    // (20 + a + B + c) % 10 = 0
-
-    // (18 + a + B + c) % 10 = (20 + a + B + c) % 10
-
-    // a: 0-9
-    // B: 0-9
-    // c: 0-9
-
     test("16-digit # flanked by non-matching digits")
         .send("9875610591081018250321")
         .expect("987XXXXXXXXXXXXXXXX321");
@@ -97,9 +79,17 @@ public class LuhnyBinTests extends TestSuite {
         .send(repeatingSequence('0', 1000))
         .expect(mask(1000));
 
+    test("long sequence of non-digits").sendAndExpect(nonDigits());
+
     testOverlappingMatches();
 
     test("long sequence of digits with no matches").sendAndExpect(nonMatchingSequence(1000));
+  }
+
+  private String nonDigits() {
+    StringBuilder nonDigits = new StringBuilder();
+    for (int i = 0; i < 1000; i++) nonDigits.append((char) (random.nextInt(68) + ':'));
+    return nonDigits.toString();
   }
 
   private void testFormatted(char delimeter) {
